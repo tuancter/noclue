@@ -1,0 +1,125 @@
+/* Cấu trúc và thiết kế tổng thể */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+/* Logo */
+.header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+/* Form đăng nhập */
+.container {
+    width: 100%;
+    max-width: 500px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.login-box {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Các liên kết tùy chọn */
+.options {
+    text-align: center;
+}
+
+.options-links {
+    margin-top: 20px;
+}
+
+.link-option {
+    color: #4CAF50;
+    font-size: 18px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin: 0 10px;
+}
+
+.link-option:hover {
+    color: #005f72;
+}
+
+
+/* CSS cho thông báo lỗi */
+/* Đảm bảo lỗi hiển thị màu đỏ và đúng vị trí */
+.error-message {
+    color: red;            /* Màu đỏ cho thông báo lỗi */
+    font-size: 14px;       /* Cỡ chữ nhỏ */
+    margin-top: 5px;       /* Khoảng cách từ ô nhập mật khẩu xuống */
+    height: 20px;          /* Đảm bảo không nhảy lên khi hiển thị */
+}
+
+.flash-messages {
+    margin: 10px 0;
+}
+
+.flash {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: #f44336;
+}
+
+.flash.success {
+    background-color: #4CAF50;  /* Màu xanh cho thông báo thành công */
+}
+
+.flash.error {
+    color: #f44336;  /* Màu đỏ cho thông báo lỗi */
+}

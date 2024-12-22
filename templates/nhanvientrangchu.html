@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ nhân viên</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nhanvien_trangchu.css') }}">
+</head>
+
+<body>
+    <header class="header">
+        <a id="main-title" href="/nhanvien_trangchu">Chấm Công Online</a>
+        <p>Xin chào, {{nhan_vien.ho_ten}}</p>
+
+        <div class="dropdown">
+            <button class="dropbtn">Tài khoản</button>
+            <div class="dropdown-content">
+                <a href="/nhanvien_trangchu/profile" id="profile">Hồ sơ</a>
+                <a href="/face" id="settings">Tải khuôn mặt</a>
+                <a href="/logout" id="logout">Đăng xuất</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav">
+            <a href="{{ url_for('nhanvien_trangchu.home') }}" id="home">Trang chủ</a>
+            <a href="{{ url_for('timetrack.timetrack')}}" id="timetrack">Chấm công</a>
+            <a href="{{url_for('nhanvientkluong.hien_thi_thong_ke_luong')}}" id="viewSalary">Xem lương tháng</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="history">
+            <h2 style="font-family: 'Segoe UI';">Lịch sử chấm công</h2>
+            <table style="font-family: Tahoma">
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Thời gian vào</th>
+                        <th>Thời gian ra</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cham_cong in danh_sach_cham_cong %}
+                    <tr>
+                        <td>{{ cham_cong[1] }}</td>
+                        <td>{{ cham_cong[2]}}</td>
+                        <td>{{ cham_cong[3]}}</td>
+                        <td>{{ cham_cong[4]}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('logout').addEventListener('click', function () {
+            // Hiển thị hộp thoại xác nhận
+            var confirmation = confirm("Bạn có chắc chắn muốn đăng xuất không?");
+
+            if (confirmation) {
+                // Nếu người dùng xác nhận, chuyển hướng về trang đăng nhập
+                window.location.href = '/dangnhapnhanvien'; // Đường dẫn trang đăng nhập
+            }
+        });
+    </script>
+</body>
+
+</html>

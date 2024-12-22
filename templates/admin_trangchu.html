@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_trangchu.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Admin Dashboard</div>
+        <ul>
+            <li><a href="{{ url_for('thongkeluong.search') }}">Thống kê lương</a></li>
+            <li><a href="javascript:void(0)" onclick="confirmLogout()">Đăng xuất</a></li>
+        </ul>
+    </nav>
+    <!-- Main Content -->
+    <div class="container">
+        <h1 class="title">Danh Sách Nhân Viên</h1>
+        <table class="employee-table">
+            <thead>
+                <tr>
+                    <th>Họ Tên</th>
+                    <th>Ngày Sinh</th>
+                    <th>Địa Chỉ</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Email</th>
+                    <th>Vị Trí</th>
+                    <th>Thao tác</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for nhan_vien in danh_sach_nhan_vien %}
+                <tr>
+                    <td>
+                        <a class = "name" href="{{ url_for('thongkechamcong.hien_thi_thong_ke', ma_nhan_vien=nhan_vien.ma_nhan_vien) }}">
+                            {{ nhan_vien.ho_ten }}
+                        </a>
+                    </td>
+                    <td class = "dob">{{ nhan_vien.ngay_sinh }}</td>
+                    <td class = "address">{{ nhan_vien.dia_chi }}</td>
+                    <td class="phone">{{ nhan_vien.so_dien_thoai }}</td>
+                    <td class = "email">{{ nhan_vien.email }}</td>
+                    <td class = "position">{{ nhan_vien.vi_tri }}</td>
+                    <td>
+                        <button class = "edit-btn" data-id="{{nhan_vien.ma_nhan_vien}}" >Sửa</button>
+                        <button onclick="xacNhanXoa(this)" data-id="{{ nhan_vien.ma_nhan_vien }}">Xóa</button>
+
+
+                    </td>
+                </tr>
+                {% endfor %}
+
+        </table>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2>Chỉnh Sửa Thông Tin Nhân Viên</h2>
+            <label for="name">Họ Tên:</label>
+            <input type="text" id="name" value="">
+
+            <label for="dob">Ngày Sinh:</label>
+            <input type="date" id="dob" value="">
+
+            <label for="address">Địa Chỉ:</label>
+            <input type="text" id="address" value="">
+
+            <label for="phone">Số Điện Thoại:</label>
+            <input type="text" id="phone" value="">
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" value="">
+
+            <label for="position">Vị Trí:</label>
+            <input type="text" id="position" value="">
+
+            <div class="modal-buttons">
+                <button onclick="saveChanges()">Lưu</button>
+                <button onclick="closeModal()">Hủy</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function confirmLogout() {
+            const confirmation = confirm("Bạn có chắc chắn muốn đăng xuất?");
+            if (confirmation) {
+                // Nếu người dùng chọn "Có", chuyển hướng về trang chủ
+                window.location.href = "/";  
+            }
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/admin_trangchu.js') }}"></script>
+
+</body>
+</html>

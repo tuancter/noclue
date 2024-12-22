@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê Lương</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/thongkeluong.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Thống Kê Lương Nhân Viên</h1>
+        </div>
+
+        <!-- Phần tìm kiếm -->
+        <div class="search-bar">
+            <input type="text" id="thang" placeholder="Nhập tháng (01-12)">
+            <input type="text" id="nam" placeholder="Nhập năm (YYYY)">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm theo tên nhân viên...">
+            <button onclick="searchSalary()">Tìm kiếm</button>
+        </div>
+
+        <!-- Bảng thống kê -->
+        <table class="employee-table">
+            <thead>
+                <tr>
+                    <th>Tháng</th>
+                    <th>Năm</th>   
+                    <th>Mã phiếu lương</th>
+                    <th>Mã Nhân Viên</th>
+                    <th>Tên Nhân Viên</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Email</th>
+                    <th>Số Ngày Đi Làm</th>
+                    <th>Số Ngày Đi Muộn</th>
+                    <th>Tổng Lương</th>
+                </tr>
+            </thead>
+            <tbody id="salaData">
+                {% for row in danh_sach %}
+                <tr>
+                    <td>{{ row.thang }}</td>
+                    <td>{{ row.nam }}</td>
+                    <td>{{ row.ma_luong }}</td>
+                    <td>{{ row.ma_nhan_vien }}</td>
+                    <td>{{ row.ho_ten }}</td>
+                    <td>{{ row.so_dien_thoai }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>{{ row.so_ngay_di_lam }}</td>
+                    <td>{{ row.so_ngay_di_muon }}</td>
+                    <td>{{ row.tong_luong }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/thongkeluong.js') }}"></script>
+    <script>
+        function searchSalary() {
+            const thang = document.getElementById('thang').value.trim();
+            const nam = document.getElementById('nam').value.trim();
+            const searchInput = document.getElementById('searchInput').value.trim();
+
+            // Tạo URL động chỉ với các tham số được nhập
+            const queryParams = new URLSearchParams();
+            if (thang) queryParams.append('thang', thang);
+            if (nam) queryParams.append('nam', nam);
+            if (searchInput) queryParams.append('search', searchInput);
+
+            fetch(`/thongkeluong/search?${queryParams.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    const salaData = document.getElementById('salaData');
+                    salaData.innerHTML = ''; // Xóa dữ liệu cũ
+
+                    // Cập nhật bảng với dữ liệu mới
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.thang}</td>
+                            <td>${row.nam}</td>
+                            <td>${row.ma_luong}</td>
+                            <td>${row.ma_nhan_vien}</td>
+                            <td>${row.ho_ten}</td>
+                            <td>${row.so_dien_thoai}</td>
+                            <td>${row.email}</td>
+                            <td>${row.so_ngay_di_lam}</td>
+                            <td>${row.so_ngay_di_muon}</td>
+                            <td>${row.tong_luong}</td>
+                        `;
+                        salaData.appendChild(tr);
+                    });
+                })
+                .catch(error => console.error('Lỗi:', error));
+        }
+    </script>
+</body>
+</html>

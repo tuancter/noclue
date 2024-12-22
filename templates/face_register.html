@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhận diện khuôn mặt</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  .video-container {
+    width: 640px;
+    height: 480px;
+    margin-left: 30px;
+    position: relative;
+    margin-top: 10px;
+  }
+
+  .video {
+    border: 2px solid black;
+    position: absolute;
+    margin-top: 40px;
+    top: 0;
+    left: 0;
+    width: 640px;
+    height: 480px;
+  }
+
+  .captured-image {
+    position: absolute;
+    margin-top: 42px;
+    margin-left: 2px;
+    top: 0;
+    left: 0;
+    width: 640px;
+    height: 480px;
+  }
+
+  .button {
+    display: flexbox;
+    margin-top: 60px;
+    margin-left: 30px;
+    padding: 10px 20px;
+    align-items: center;
+    text-align: center;
+    justify-items: center;
+    background-color: cadetblue;
+    cursor: pointer;
+  }
+
+  .button:hover {
+    background-color: #0144a8;
+  }
+
+  .note-container {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    align-items: flex-end;
+    top: 50px;
+    right: 50px;
+    padding: 30px 40px;
+    background-color: #ffffff;
+    border: 3px solid black;
+    border-radius: 20px;
+  }
+
+  #back {
+    position: absolute;
+    background-color: #2d86fa;
+    color: white;
+    padding: 25px 50px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    right: 15%;
+    top: 60%;
+    font-size: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  #back:hover {
+    background-color: #0144a8;
+  }
+</style>
+
+<body>
+  <div class="note-container">
+    <h1>Hướng dẫn</h1>
+    <p>Để tải khuôn mặt, vui lòng bật camera và chụp ảnh khuôn mặt của bạn.</p>
+    <p>Ảnh sẽ được lưu lại và hiển thị ở ngay màn hình camera.</p>
+    <p> Ấn nút "Mở Camera" để làm mới camera</p>
+  </div>
+  <button id="back" onclick="back()">Quay lại trang chủ</button>
+  <div class="video-container">
+    <h1>Tải khuôn mặt</h1>
+    <video id="video" class="video" autoplay></video>
+    <img id="capturedImage" class="captured-image" />
+  </div>
+  <button id="startButton" class="button">Bật Camera</button>
+  <button id="captureButton" class="button">Chụp và lưu ảnh</button>
+  <canvas id="canvas" style="display: none;"></canvas>
+  <script>
+    let stream;
+
+    document.getElementById('startButton').addEventListener('click', function () {
+      const img = document.getElementById('capturedImage');
+      img.style.display = 'none';
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (mediaStream) {
+          stream = mediaStream;
+          document.getElementById('video').srcObject = stream;
+        })
+        .catch(function (err) {
+          console.error("Error accessing the camera: " + err);
+        });
+    });
+
+    document.getElementById('captureButton').addEventListener('click', function () {
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(function (blob) {
+        const formData = new FormData();
+        formData.append('file', blob, 'register_face.png');
+        fetch('/face/upload', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Success:', data);
+            if (stream) {
+              stream.getTracks().forEach(track => track.stop());
+            }
+            const url = URL.createObjectURL(blob);
+            const img = document.getElementById('capturedImage');
+            img.src = url;
+            img.style.display = 'block';
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      });
+    });
+    async function back() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      window.location.href = '/nhanvien_trangchu';
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống Kê Chấm Công</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/thongkechamcong.css') }}">
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Thống Kê Chấm Công</h2>
+
+        <div class="employee-info">
+            <h3>Thông Tin Nhân Viên</h3>
+            <p><strong>Họ Tên:</strong> {{ thong_tin_nhan_vien.ho_ten }}</p>
+            <p><strong>Vị Trí:</strong> {{ thong_tin_nhan_vien.vi_tri }}</p>
+            <p><strong>Số Điện Thoại:</strong> {{ thong_tin_nhan_vien.so_dien_thoai }}</p>
+            <p><strong>Email:</strong> {{ thong_tin_nhan_vien.email }}</p>
+        </div>
+
+        <!-- Tìm kiếm theo ngày -->
+        <div class="search-container">
+            <input type="date" id="searchDate" placeholder="Tìm kiếm theo ngày">
+            <button onclick="searchAttendance()">Tìm kiếm</button>
+        </div>
+
+        <!-- Bảng thống kê chấm công -->
+        <table id="attendanceData">
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Trạng Thái</th>
+                    <th>Giờ Đi Làm</th>
+                    <th>Giờ Tan Ca</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in danh_sach_cham_cong %}
+                <tr>
+                    <td>{{ record[1] }}</td> <!-- Ngày -->
+                    <td class="status">{{ record[4] }}</td> <!-- Trạng Thái -->
+                    <td class="start-time">{{ record[2] }}</td> <!-- Giờ vào -->
+                    <td class="end-time">{{ record[3] }}</td> <!-- Giờ ra -->
+                    <td>
+                        <button class="edit-btn" data-id="{{record[0]}}">Chỉnh sửa</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Modal chỉnh sửa -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <h2>Chỉnh Sửa Thông Tin Chấm Công</h2>
+                <label for="status">Trạng Thái:</label>
+                <select id="status" name="status">
+                    <option value="Đi làm">Đi làm</option>
+                    <option value="Đi muộn">Đi muộn</option>
+                    <option value="Không đi làm">Không đi làm</option>
+                </select><br><br>
+
+                <label for="start-time">Giờ Đi Làm:</label>
+                <input type="time" id="start-time" name="start-time"><br><br>
+
+                <label for="end-time">Giờ Tan Ca:</label>
+                <input type="time" id="end-time" name="end-time"><br><br>
+
+                <button onclick="saveChanges()">Lưu Thay Đổi</button>
+                <button onclick="closeModal()">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/thongkechamcong.js') }}"></script>
+</body>
+</html>
+

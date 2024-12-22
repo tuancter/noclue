@@ -1,0 +1,80 @@
+h1 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    margin-top:0px;
+    text-align: center;
+    position: relative;
+}
+
+.video-container {
+    width: 640px;
+    height: 480px;
+    margin-left: 30px;
+    position: relative;
+    margin-top: 10px;
+}
+
+.video {
+    border: 2px solid black;
+    position: absolute;
+    margin-top: 40px;
+    top: 0;
+    left: 0;
+    width: 640px;
+    height: 480px;
+}
+
+.captured-image {
+    position: absolute;
+    margin-top: 42px;
+    margin-left: 2px;
+    top: 0;
+    left: 0;
+    width: 640px;
+    height: 480px;
+}
+
+.button {
+    display: flexbox;
+    margin-top: 25px;
+    margin-left: 30px;
+    padding: 10px 20px;
+}
+
+.button button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    border-bottom: 2px solid #4CAF50;
+}
+
+.button button:hover {
+    background-color: #45a049;
+    color: rgb(161, 255, 239);
+    border-bottom: 2px solid black;
+    transition: background-color 0.9s ease, color 0.9s ease, border-bottom 0.5s ease;
+}
+
+.back-container {
+    text-align: right;
+}
+
+.back-container button{
+    font-size: 28px;
+    border-radius: 5px;;
+    background-color: #54bb00;
+    color: black;
+    margin-right: 250px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.back-container button:hover {
+    padding: 12px 22px;
+    color: rgb(255, 204, 204);
+    transition: color 0.3s ease,  padding 0.3s ease;
+}

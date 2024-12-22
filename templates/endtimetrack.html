@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết thúc chấm công</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/endtimetrack.css') }}">
+</head>
+
+<body>
+    <div class="form-container">
+        <form id="endtimetrack-form" action="/timetrack/end" method="POST">
+            <h2 style="text-align: center;">Phiếu Chấm Công</h2>
+            <label for="id_employee">Mã nhân viên:</label>
+            <input type="text" id="id_employee" name="id_employee" value="{{nhanvien.ma_nhan_vien}}" readonly><br>
+            <label for="name">Họ tên:</label>
+            <input type="text" id="name" name="name" value="{{nhanvien.ho_ten}}" readonly><br>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" value="{{nhanvien.email}}" readonly><br>
+            <label for="current_time">Thời gian hiện tại:</label>
+            <input type="text" id="current_time" name="current_time" readonly><br>
+            <label for="counted_time">Thời gian đã chấm công:</label>
+            <input type="text" id="counted_time" name="counted_time" readonly><br>
+            <div style="text-align: center;">
+                <input type="submit" value="Xác nhận">
+            </div>
+        </form>
+    </div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentTimeInput = document.getElementById('current_time');
+        const countedTimeInput = document.getElementById('counted_time');
+
+        fetch('time_in', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+
+            .then(data => {
+                console.log('Fetched data:', data);
+                const startStr = data.key;
+                const [startHour, startMinute] = startStr.split(":").map(Number);
+                const now = new Date();
+                const formattedCurrentTime = now.toLocaleTimeString('en-GB', { hour12: false });
+                const timeParts = formattedCurrentTime.split(':');
+
+                const hour = timeParts[0] - startHour;
+                const minute = timeParts[1] - startMinute;
+
+                document.getElementById("counted_time").value = hour + " giờ " + minute + " phút";
+                document.getElementById('current_time').value = formattedCurrentTime;
+
+            })
+    });
+</script>
+
+</html>

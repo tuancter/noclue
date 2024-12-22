@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin nhân viên</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Thông tin nhân viên</h2>
+        <div class="form-group">
+            <label for="ma_nhan_vien">Mã nhân viên</label>
+            <input type="text" id="ma_nhan_vien" value="{{ nhan_vien.ma_nhan_vien }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="ho_ten">Họ tên</label>
+            <input type="text" id="ho_ten" value="{{ nhan_vien.ho_ten }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="ngay_sinh">Ngày sinh</label>
+            <input type="text" id="ngay_sinh" value="{{ nhan_vien.ngay_sinh }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="dia_chi">Địa chỉ</label>
+            <input type="text" id="dia_chi" value="{{ nhan_vien.dia_chi }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="so_dien_thoai">Số điện thoại</label>
+            <input type="text" id="so_dien_thoai" value="{{ nhan_vien.so_dien_thoai }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" id="email" value="{{ nhan_vien.email }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="vi_tri">Vị trí</label>
+            <input type="text" id="vi_tri" value="{{ nhan_vien.vi_tri }}" readonly>
+        </div>
+        <button class="home" id="back" onclick="window.location.href = '/nhanvien_trangchu';">Quay lại Trang
+            chủ</button>
+        <button class="edit" id="editing" onclick="edited()">Sửa thông tin</button>
+
+    </div>
+    <div class="popup-message" id="popupMessage">
+        <strong id="popupTitle"></strong>
+        <p id="popupContent"></p>
+        <div class="popup-progress" id="popupProgress"></div>
+    </div>
+</body>
+<script>
+    function showPopupMessage(title, content) {
+        const popup = document.getElementById('popupMessage');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupContent = document.getElementById('popupContent');
+        const popupProgress = document.getElementById('popupProgress');
+        popupTitle.textContent = title;
+        popupContent.textContent = content;
+        popup.classList.add('show');
+        popupProgress.style.animation = 'progressBar 3s linear forwards';
+        setTimeout(() => {
+            popup.classList.remove('show');
+            popup.classList.add('hide');
+            setTimeout(() => {
+                popup.classList.remove('hide');
+            }, 500);
+        }, 3000);
+    }
+
+    function edited() {
+        const inputs = document.querySelectorAll('.form-group input');
+        inputs.forEach((input, index) => {
+            if (index !== 0) { // Skip the first input element
+                input.removeAttribute('readonly');
+                input.style.backgroundColor = 'white';
+            }
+        });
+        const editButton = document.getElementById('editing');
+        editButton.textContent = 'Lưu thay đổi';
+        editButton.onclick = saveChanges;
+    }
+
+    function saveChanges() {
+        const inputs = document.querySelectorAll('.form-group input');
+        const data = {};
+        inputs.forEach(input => {
+            input.setAttribute('readonly', true);
+            data[input.id] = input.value;
+        });
+        fetch('edit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                const editButton = document.getElementById('editing');
+                editButton.textContent = 'Sửa thông tin';
+                editButton.onclick = edited;
+                showPopupMessage('Thông báo', 'Thông tin đã được cập nhật thành công.');
+            }
+        });
+    }
+</script>
+
+</html>

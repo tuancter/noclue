@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Lương Nhân Viên</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nhanvien_xemluong.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Thông Tin Lương Của Nhân Viên</h1>
+        </div>
+
+        <!-- Thông tin nhân viên -->
+        <div class="employee-info">
+            <p><strong>Mã Nhân Viên:</strong> {{ thong_tin_nhan_vien.ma_nhan_vien }}</p>
+            <p><strong>Họ Tên:</strong> {{ thong_tin_nhan_vien.ho_ten }}</p>
+            <p><strong>Số Điện Thoại:</strong> {{ thong_tin_nhan_vien.so_dien_thoai }}</p>
+            <p><strong>Email:</strong> {{ thong_tin_nhan_vien.email }}</p>
+        </div>
+
+        <!-- Bảng lương -->
+        <table class="salary-table">
+            <thead>
+                <tr>
+                    <th>Tháng</th>
+                    <th>Năm</th>
+                    <th>Số Ngày Đi Làm</th>
+                    <th>Số Ngày Đi Muộn</th>
+                    <th>Tổng Lương</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for luong in danh_sach_luong %}
+                <tr>
+                    <td>{{ luong.thang }}</td>
+                    <td>{{ luong.nam }}</td>
+                    <td>{{ luong.so_ngay_di_lam }}</td>
+                    <td>{{ luong.so_ngay_di_muon }}</td>
+                    <td>{{ luong.tong_luong }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

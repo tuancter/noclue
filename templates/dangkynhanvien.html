@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Nhân Viên</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dangkynhanvien.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Đăng Ký Nhân Viên</h2>
+        <form id="registrationForm" action="{{ url_for('dangky.dangky_nhanvien') }}" method="POST">
+            <label for="fullName">Họ và tên:</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="birthDate">Ngày sinh:</label>
+            <input type="date" id="birthDate" name="birthDate" required>
+
+            <label for="address">Địa chỉ:</label>
+            <input type="text" id="address" name="address" required>
+
+            <label for="phoneNumber">Số điện thoại:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="position">Vị trí:</label>
+            <input type="text" id="position" name="position" required>
+
+            <label for="password">Mật khẩu:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="confirmPassword">Xác nhận mật khẩu:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+            <button type="submit">Đăng Ký</button>
+        </form>
+        
+
+        {% if message %}
+        <div style="color: green; font-weight: bold;">
+            {{ message }}
+        </div>
+        {% endif %}
+    </div>
+    <!-- {% if message %}
+    <div style="color: green; font-weight: bold;">
+        {{ message }}
+    </div>
+    {% endif %} -->
+
+    <script src="{{ url_for('static', filename='js/dangkynhanvien.js') }}"></script>
+</body>
+</html>

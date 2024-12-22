@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo phiếu chấm công</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/timetrack.css') }}">
+    <style>
+        @media (max-width: 600px) {
+            .button-container {
+                top: 10%;
+                left: 5%;
+            }
+
+            .back-button {
+                padding: 10px 10px;
+                font-size: 12px;
+            }
+
+            .note {
+                top: 10px;
+                right: 10px;
+                max-width: 90%;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <form id="timetrack-form" action="/" method="POST">
+            <h2 style="text-align: center;">Phiếu Chấm Công</h2>
+            <label for="time">Thời gian hiện tại:</label>
+            <input type="text" id="time" name="time" readonly><br>
+            <label for="method">Phương thức chấm công:</label>
+            <select id="method" name="method">
+                <option value="face">Nhận diện khuôn mặt</option>
+                <option value="manual">Chấm công thủ công</option>
+            </select>
+            <div class="button-container" style="text-align: center;">
+                <button class="back-button" type="button" onclick="window.location.href='/nhanvien_trangchu'"
+                    style="margin-right: 20px;">Quay lại trang chủ</button>
+                <input type="submit" value="Xác nhận">
+            </div>
+        </form>
+        <div class="note">
+            <p id="note-content"><strong>Lưu ý:</strong></p>
+            <p><strong>1.</strong> Phương thức chấm công thủ công sẽ gửi đơn phê duyệt lên trang quản trị viên, vui lòng
+                chờ hoặc liên hệ với quản trị viên để được hỗ trợ!</p>
+            <p><strong>2.</strong> Phương thức nhận diện khuôn mặt được sẽ yêu cầu quyền truy cập camera để nhận diện
+                khuôn mặt!</p>
+
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const timeInput = document.getElementById('time');
+        const now = new Date();
+        const formattedTime = now.toLocaleString('en-GB', { hour12: false });
+        timeInput.value = formattedTime;
+
+        const form = document.getElementById('timetrack-form');
+        const methodSelect = document.getElementById('method');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (methodSelect.value === 'face') {
+                const filePath = 'uploads\face_register\register_face.png';
+                fetch('filecheck', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ file_path: filePath }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            console.log('OK');
+                            window.location.href = '/matching';
+                        } else {
+                            alert('Bạn chưa đăng ký khuôn mặt!');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            } else if (methodSelect.value === 'manual') {
+                fetch('timetrack_start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        requesting: 'update'
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                    });
+                window.location.href = '/nhanvien_trangchu';
+            }
+        });
+
+    });
+</script>
+
+</html>

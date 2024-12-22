@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhận diện khuôn mặt</title>
+  <link rel="stylesheet" href="/static/css/face_timetrack.css">
+</head>
+
+<body>
+  <div class="all" style="align-items: center; justify-content: center; display: flex; height: 80vh;">
+    <div class="video-container">
+      <h1 id="videoTitle">Nhận diện khuôn mặt</h1>
+      <video id="video" class="video" autoplay></video>
+      <img id="capturedImage" class="captured-image" />
+    </div>
+    <div class="button">
+      <button id="startButton" class="button">Bật Camera</button>
+      <button id="captureButton" onclick="submitPicture()" class="button">Chụp ảnh</button>
+      <button id="matchButton" onclick="submitFaceMatch()" class="button">Nhận diện khuôn mặt</button>
+    </div>
+    <pre id="facematch-result"></pre>
+    <div id="result" class="result"></div>
+    <canvas id="canvas" style="display: none;"></canvas>
+  </div>
+  <div class="back-container">
+    <button id="back" onclick=" window.location.href = '/timetrack';">Quay lại</button>
+  </div>
+</body>
+<script>
+  let stream;
+
+  document.getElementById('startButton').addEventListener('click', function () {
+    const img = document.getElementById('capturedImage');
+    img.style.display = 'none';
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function (mediaStream) {
+        stream = mediaStream;
+        document.getElementById('video').srcObject = stream;
+      })
+      .catch(function (err) {
+        console.error("Error accessing the camera: " + err);
+      });
+  });
+
+  async function submitPicture() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(function (blob) {
+      const formData = new FormData();
+      formData.append('file', blob, 'face_capture.png');
+      fetch('upload_image', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+          }
+          const url = URL.createObjectURL(blob);
+          const img = document.getElementById('capturedImage');
+          img.src = url;
+          img.style.display = 'block';
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    });
+  }
+  async function getBase64FromPath(filePath) {
+    const response = await fetch(filePath);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  async function submitFaceMatch() {
+    const image1Path = "uploads/face_compare/face_capture.png";
+    const image2Path = "uploads/face_registers/register_face.png";
+    const b64image1 = await getBase64FromPath(image1Path);
+    const b64image2 = await getBase64FromPath(image2Path);
+    fetch('api/facematch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ b64image1, b64image2 })
+    })
+      .then(response => response.json())
+      .then(data => {
+        messagejson = JSON.stringify(data, null, 2);
+        message = JSON.parse(messagejson);
+        if (message.match) {
+          alert('Nhận diện khuôn mặt thành công!\nĐộ khớp đạt: ' + (message.score * 100).toFixed(0) + '%');
+          fetch('/timetrack/timetrack_start', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              requesting: 'update'
+            })
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+            });
+          window.location.href = '/timetrack/endtimetrack';
+        } else {
+          alert('Nhận diện khuôn mặt thất bại, vui lòng thử lại!');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error: ' + error);
+      });
+  }
+
+</script>
+
+</html>

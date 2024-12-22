@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/trangchu.css') }}">
+</head>
+<body>
+    <!-- Header với logo -->
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo">
+        </div>
+    </header>
+
+
+    <!-- Nội dung chính -->
+    <div class="container">
+        <div class="login-box">
+            <h2>Đăng Nhập Admin</h2>
+            <form action="{{ url_for('dangnhap_admin.admin_login') }}" method="POST">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required placeholder="Nhập email của bạn">
+                
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu của bạn">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+                <button type="submit" class="btn-login">Đăng Nhập</button>
+            </form>
+        </div>
+
+        <div class="options">
+            <h3>Chọn một tùy chọn</h3>
+            <div class="options-links">
+                <!-- Các đường link sẽ dẫn đến các trang đăng ký và đăng nhập nhân viên -->
+                <a href="{{ url_for('dangky.dangky_nhanvien') }}" class="link-option">Đăng ký nhân viên</a> | 
+                <a href="{{ url_for('dangnhapnhanvien.dangnhap_nhanvien') }}" class="link-option">Đăng nhập nhân viên</a>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/trangchu.js') }}"></script>
+</body>
+</html>
