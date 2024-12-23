@@ -11,7 +11,7 @@
 <body>
     <div class="form-container">
         <form id="endtimetrack-form" action="/timetrack/end" method="POST">
-            <h2 style="text-align: center;">Phiếu Chấm Công</h2>
+            <h2 style="text-align: center;">Kết Thúc Phiếu Chấm Công</h2>
             <label for="id_employee">Mã nhân viên:</label>
             <input type="text" id="id_employee" name="id_employee" value="{{nhanvien.ma_nhan_vien}}" readonly><br>
             <label for="name">Họ tên:</label>
@@ -23,7 +23,7 @@
             <label for="counted_time">Thời gian đã chấm công:</label>
             <input type="text" id="counted_time" name="counted_time" readonly><br>
             <div style="text-align: center;">
-                <input type="submit" value="Xác nhận">
+                <input type="submit" value="Hoàn thành">
             </div>
         </form>
     </div>
@@ -40,22 +40,24 @@
             }
         })
             .then(response => response.json())
-
             .then(data => {
                 console.log('Fetched data:', data);
                 const startStr = data.key;
                 const [startHour, startMinute] = startStr.split(":").map(Number);
-                const now = new Date();
-                const formattedCurrentTime = now.toLocaleTimeString('en-GB', { hour12: false });
-                const timeParts = formattedCurrentTime.split(':');
+                const startDate = new Date();
+                startDate.setHours(startHour, startMinute, 0);
 
-                const hour = timeParts[0] - startHour;
-                const minute = timeParts[1] - startMinute;
+                setInterval(() => {
+                    const now = new Date();
+                    const formattedCurrentTime = now.toLocaleTimeString('en-GB', { hour12: false });
+                    const diffMs = now - startDate;
+                    const diffHrs = Math.floor((diffMs % 86400000) / 3600000);
+                    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
 
-                document.getElementById("counted_time").value = hour + " giờ " + minute + " phút";
-                document.getElementById('current_time').value = formattedCurrentTime;
-
-            })
+                    countedTimeInput.value = `${diffHrs} giờ ${diffMins} phút`;
+                    currentTimeInput.value = formattedCurrentTime;
+                }, 1000);
+            });
     });
 </script>
 

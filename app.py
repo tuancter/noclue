@@ -32,7 +32,7 @@ app.register_blueprint(nhanvientkluong, url_prefix='/nhanvientkluong')
 
 @app.route('/')
 def home():
-    return render_template('trangchu.html')
+    return redirect(url_for('dangnhapnhanvien.dangnhap_nhanvien'))
 
 @app.route('/logout')
 def logout():

@@ -2,13 +2,14 @@ import sqlite3
 from datetime import datetime
 
 class ChamCong:
-    def __init__(self, ma_cham_cong=None, ma_nhan_vien=None, ngay=None, gio_vao=None, gio_ra=None, trang_thai=None):
+    def __init__(self, ma_cham_cong=None, ma_nhan_vien=None, ngay=None, gio_vao=None, gio_ra=None, trang_thai=None, phuong_thuc=None):
         self.ma_cham_cong = ma_cham_cong
         self.ma_nhan_vien = ma_nhan_vien
         self.ngay = ngay
         self.gio_vao = gio_vao
         self.gio_ra = gio_ra
         self.trang_thai = trang_thai
+        self.phuong_thuc = phuong_thuc
 
     @staticmethod
     def create_table():
@@ -24,6 +25,7 @@ class ChamCong:
                 gio_ra TIME,
                 trang_thai TEXT CHECK(trang_thai IN ('Đi làm', 'Đi muộn', 'Không đi làm')) NOT NULL,
                 FOREIGN KEY (ma_nhan_vien) REFERENCES NhanVien(ma_nhan_vien)
+                phuong_thuc TEXT CHECK(phuong_thuc IN ('Nhận diện', 'Thủ công')) NOT NULL
             )
         ''')
         connection.commit()
@@ -42,14 +44,14 @@ class ChamCong:
             return record[0]
 
     @staticmethod
-    def them_cham_cong(ma_nhan_vien, ngay, gio_vao, gio_ra, trang_thai):
+    def them_cham_cong(ma_nhan_vien, ngay, gio_vao, gio_ra, phuong_thuc, trang_thai):
         """Thêm một bản ghi chấm công mới."""
         connection = sqlite3.connect('database.db')
         cursor = connection.cursor()
         cursor.execute('''
-            INSERT INTO ChamCong (ma_nhan_vien, ngay, gio_vao, gio_ra, trang_thai)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (ma_nhan_vien, ngay, gio_vao, gio_ra, trang_thai))
+            INSERT INTO ChamCong (ma_nhan_vien, ngay, gio_vao, gio_ra, phuong_thuc,trang_thai)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (ma_nhan_vien, ngay, gio_vao, gio_ra, phuong_thuc, trang_thai))
         connection.commit()
         connection.close()
 
@@ -120,7 +122,8 @@ class ChamCong:
                 ngay=record[2],
                 gio_vao=record[3],
                 gio_ra=record[4],
-                trang_thai=record[5]
+                trang_thai=record[5],
+                phuong_thuc=record[6]
             )
             return chamcong
         else:
@@ -142,4 +145,20 @@ class ChamCong:
         connection.commit()
         connection.close()
 
+    @staticmethod
+    def getManuals():
+        connection = sqlite3.connect('database.db')
+        cursor = connection.cursor()
+        cursor.execute('SELECT * FROM ChamCong WHERE phuong_thuc = "Thủ công"')
+        records = cursor.fetchall()
+        connection.close()
+        return records
+    
+    def getTimetracksByEmployeeID(ma_nhan_vien):
+        connection = sqlite3.connect('database.db')
+        cursor = connection.cursor()
+        cursor.execute('SELECT * FROM ChamCong WHERE ma_nhan_vien = ?', (ma_nhan_vien,))
+        records = cursor.fetchall()
+        connection.close()
+        return records
 

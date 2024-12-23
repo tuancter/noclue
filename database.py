@@ -38,8 +38,10 @@ def tao_co_so_du_lieu():
         ngay DATE NOT NULL,
         gio_vao TIME,
         gio_ra TIME,
+        phuong_thuc TEXT CHECK(phuong_thuc IN ('Nhận diện', 'Thủ công')) NOT NULL,
         trang_thai TEXT CHECK(trang_thai IN ('Đi làm', 'Đi muộn', 'Không đi làm')) NOT NULL,
         FOREIGN KEY (ma_nhan_vien) REFERENCES NhanVien(ma_nhan_vien)
+
     )
     ''')
 

@@ -11,10 +11,11 @@ def dangnhap_nhanvien():
         email = request.form['email']
         password = request.form['password']
         tai_khoan = TaiKhoan.kiem_tra_dang_nhap(email, password)
-
         if tai_khoan:
             session['ma_tai_khoan'] = tai_khoan[0]
-            return redirect(url_for('nhanvien_trangchu.home'))  # Chuyển hướng đến trang chủ nhân viên
+            return redirect(url_for('nhanvien_trangchu.home'))
+        elif email == "admin@gmail.com" and password == "admin":
+            return redirect(url_for('admin_trangchu.lay_danh_sach_nhan_vien'))
         else:
             # Nếu tài khoản hoặc mật khẩu sai
             flash("Không thể đăng nhập, vui lòng kiểm tra lại thông tin.", "danger")

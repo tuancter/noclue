@@ -2,8 +2,6 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from models.NhanVien import NhanVien
 from models.TaiKhoan import TaiKhoan
 
-import hashlib
-
 # Tạo blueprint cho đăng ký
 dangky = Blueprint('dangky', __name__)
 
@@ -51,9 +49,3 @@ def dangky_nhanvien():
 
     return render_template('dangkynhanvien.html')
 
-@dangky.route('/dangnhapnhanvien', methods=['GET', 'POST'])
-def dangnhap_nhanvien():
-    if request.method == 'POST':
-        # ...existing code...
-        pass
-    return render_template('dangnhapnhanvien.html')

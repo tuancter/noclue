@@ -76,7 +76,7 @@ class TaiKhoan:
             # Cập nhật email vào bảng TaiKhoan
             cursor.execute('''
                 UPDATE TaiKhoan
-                SET email = ?
+                SET email_dang_nhap = ?
                 WHERE ma_tai_khoan = ?
             ''', (email, ma_tai_khoan))
 
@@ -127,3 +127,11 @@ class TaiKhoan:
         conn.close()
         return emails
 
+    @staticmethod
+    def getRole(email):
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT quyen FROM TaiKhoan where email_dang_nhap = ?", (email,))
+        roles = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return roles

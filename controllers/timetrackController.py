@@ -9,15 +9,24 @@ timetrack_bp = Blueprint('timetrack', __name__)
 
 @timetrack_bp.route('/')
 def timetrack():
-    if 'ma_tai_khoan' not in session:
-        return redirect(url_for('dangnhapnhanvien.dangnhap_nhanvien'))
-    else:
-        id = ChamCong.getID(NhanVien.lay_ma_nhan_vien_tu_ma_tai_khoan(session['ma_tai_khoan']))
-        gio_ra = ChamCong.lay_thong_tin_cham_cong_theo_id(id).gio_ra
-        if gio_ra == "Chưa kết thúc":
-            return redirect(url_for('timetrack.endtimetrack'))
-        else:
-            return render_template('timetrack.html')
+    try:
+            if 'ma_tai_khoan' not in session:
+                return redirect(url_for('dangnhapnhanvien.dangnhap_nhanvien'))
+            else:
+                idEmployee = NhanVien.lay_ma_nhan_vien_tu_ma_tai_khoan(session['ma_tai_khoan'])
+                records = ChamCong.getTimetracksByEmployeeID(idEmployee)
+                print("check: ", records)
+                if records == []:
+                    return render_template('timetrack.html')
+                else:
+                    gio_ra = ChamCong.lay_thong_tin_cham_cong_theo_id(ChamCong.getID(idEmployee)).gio_ra
+                    if gio_ra == 'Chưa kết thúc':
+                        return redirect(url_for('timetrack.endtimetrack'))
+                    else:
+                        return render_template('timetrack.html')
+    except Exception as e:
+        print(f"Error in timetrack function: {e}")
+        return redirect(url_for('nhanvien_trangchu.home'))
 
 @timetrack_bp.route('/endtimetrack')
 def endtimetrack():
@@ -40,19 +49,22 @@ def time_in():
 def timetrack_create():
     data = request.get_json()
     
-    requesting = data.get('requesting')
-    if requesting == 'update':
+    getMethod = data.get('method')
+    if getMethod == 'manual' or getMethod == 'face':
         time = datetime.now()
         time_in = time.strftime("%H:%M")
         day_in = time.strftime("%Y-%m-%d")
         hour = time.hour
         minute = time.minute
         id_NV = NhanVien.lay_ma_nhan_vien_tu_ma_tai_khoan(session["ma_tai_khoan"])
-
+        if getMethod == 'manual':
+            method = 'Thủ công'
+        elif getMethod == 'face':
+            method = 'Nhận diện'
         if (hour > 8 or (hour == 8 and minute > 10)):
-            ChamCong.them_cham_cong(id_NV, day_in, time_in, "Chưa kết thúc", 'Đi muộn')
+            ChamCong.them_cham_cong(id_NV, day_in, time_in, "Chưa kết thúc", method, 'Đi muộn')
         else:
-            ChamCong.them_cham_cong(id_NV, day_in, time_in, "Chưa kết thúc", 'Đi làm')
+            ChamCong.them_cham_cong(id_NV, day_in, time_in, "Chưa kết thúc", method, 'Đi làm')
     return redirect(url_for('timetrack.endtimetrack'))
         
 @timetrack_bp.route('/end', methods=['POST'])

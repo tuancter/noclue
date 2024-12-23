@@ -63,10 +63,7 @@ def cap_nhat_nhan_vien(ma_nhan_vien):
     nhan_vien_data = NhanVien.lay_thong_tin_nhan_vien(ma_nhan_vien)
     #Cập nhật thông tin trong cơ sở dữ liệu bảng TaiKhoan
     #lay ma tai khoan tu id nhân viên
-    nhanvien = NhanVien.lay_thong_tin_nhan_vien(ma_nhan_vien)
-    ma_tai_khoan = nhanvien.ma_tai_khoan
     #cập nhật
-    TaiKhoan.cap_nhat_email(ma_tai_khoan)
 
     if nhan_vien_data is None:
         return jsonify({'error': 'Không tìm thấy dữ liệu chấm công từ back end'}), 404
@@ -98,3 +95,11 @@ def xoa_nhan_vien(ma_nhan_vien):
 
     except Exception as e:
         print("Lỗi là: ", str(e))
+
+@admin_bp.route('/phe_duyet', methods=['GET','POST'])
+def phe_duyet():
+    chamcongs = ChamCong.getManuals()
+    nhanviens = []
+    for chamcong in chamcongs:
+        nhanviens.append(NhanVien.lay_thong_tin_nhan_vien(chamcong[1]))
+    return render_template('admin_phe_duyet.html', chamcongs = chamcongs, nhanviens = nhanviens)

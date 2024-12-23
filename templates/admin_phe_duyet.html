@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_trangchu.css') }}">
+    <style>
+        .operation button {
+            padding: 5px 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        .operation button:hover {
+            cursor: pointer;
+        }
+
+        #AC {
+            background-color: green;
+        }
+
+        #AC:hover {
+            background-color: darkgreen;
+        }
+
+        #RJ {
+            background-color: red;
+        }
+
+        #RJ:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Admin Dashboard</div>
+        <ul>
+            <li><a href="{{url_for('admin_trangchu.lay_danh_sach_nhan_vien')}}">Danh sách nhân viên</a></li>
+            <li><a href="/phe_duyet">Phê duyệt chấm công</a></li>
+            <li><a href="{{ url_for('thongkeluong.search') }}">Thống kê lương</a></li>
+            <li><a href="javascript:void(0)" onclick="confirmLogout()">Đăng xuất</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1 class="title">Phê Duyệt Chấm Công</h1>
+        <table class="employee-table">
+            <thead>
+                <tr>
+                    <th>Mã chấm công</th>
+                    <th>Mã nhân viên</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Vị Trí</th>
+                    <th>Giờ vào</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chamcong in chamcongs %}
+                {% for nhanvien in nhanviens %}
+                <tr>
+                    <td class="idTimetrack">{{chamcong[0]}}</td>
+                    <td class="idEmployee">{{ nhanvien.ma_nhan_vien }}</td>
+                    <td class="name">{{nhanvien.ho_ten}}</td>
+                    <td class="email">{{nhanvien.email}}</td>
+                    <td class="position">{{nhanvien.vi_tri}}</td>
+                    <td class="timeIn">{{chamcong[3]}}</td>
+                    <td class="operation">
+                        <button id="AC">Chấp nhận</button>
+                        <button id="RJ">Từ chối</button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+        </table>
+    </div>
+
+</body>
+<script>
+    document.getElementById('AC').addEventListener('click', function () {
+        alert('Chấp nhận thành công');
+        window.location.reload();
+    });
+    document.getElementById('RJ').addEventListener('click', function () {
+        alert('Từ chối thành công');
+        window.location.reload();
+    });
+</script>
+</html>
